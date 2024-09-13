@@ -11,7 +11,13 @@ app.get('/layer-proxy', (req, res) => {
         if (!tileUrl) {
             return res.status(400).send('Tile URL is required.');
         }
-        const fullUrl = `${tileUrl.url}&MNC=${tileUrl.MNC}&RAT=${tileUrl.RAT}&z=${tileUrl.z}&x=${tileUrl.x}&y=${tileUrl.y}&band=${tileUrl.band}`;
+        
+        const split_url = tileUrl.url.split('?');
+        const base_url = split_url[0];
+        delete tileUrl.url;
+        const param = new URLSearchParams(tileUrl);
+        
+        const fullUrl = `${base_url}?${split_url[1]}&${param}`;
 
         request(fullUrl).pipe(res);
     } catch (err) {
